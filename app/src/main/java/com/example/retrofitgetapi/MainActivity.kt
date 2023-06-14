@@ -1,27 +1,33 @@
 package com.example.retrofitgetapi
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import com.example.retrofitgetapi.Network.ApiClient
 import com.example.retrofitgetapi.databinding.ActivityMainBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var adapter: RvAdapter
+    private lateinit var adapter: RVAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        adapter = RvAdapter(this@MainActivity, arrayListOf())
-        binding.rvMain.adapter = adapter
-        binding.rvMain.setHasFixedSize(true)
+        adapter = RVAdapter(this@MainActivity, arrayListOf())
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.setHasFixedSize(true)
+    }
+    override fun onResume() {
+        super.onResume()
         remoteGetdatamahasiswa()
     }
     private fun remoteGetdatamahasiswa() {
-        ApiClient.apiService.getdatamahasiswa().enqueue(object :
-            Callback<ApiResponse> {
+        ApiClient.apiService.remoteGetdatamahasiswa().enqueue(object
+            : Callback<ApiResponse> {
             override fun onResponse(call: Call<ApiResponse>,
                                     response: Response<ApiResponse>) {
                 if (response.isSuccessful) {
@@ -40,5 +46,17 @@ class MainActivity : AppCompatActivity() {
     }
     private fun setDataToAdapter(data: List<Mahasiswa>) {
         adapter.setData(data)
+    }
+    fun Insert(view: View) {
+        val intent = Intent(this,
+            com.example.retrofitgetapi.fitur.Insert::class.java)
+        startActivity(intent)
+    }
+    override fun onBackPressed() {
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_HOME)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+        finish()
     }
 }
